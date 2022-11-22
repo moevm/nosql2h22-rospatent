@@ -1,11 +1,5 @@
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="{{ url_for('static', filename= 'css/style.css') }}">
-    <title>Rospatent</title>
-</head>
-
-<h1>Rospatent app</h1>
-
+{% extends "base.html" %}
+{% block content %}
 <form action="/adduser">
     <input type="submit" value="Add Item"/>
 </form>
@@ -26,3 +20,5 @@
         {% endfor %}
     </tbody>
 </table>
+
+{% endblock %}

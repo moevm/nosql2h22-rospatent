@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<div class="notification is-danger">
+    {{ messages[0] }}
+</div>
+{% endif %}
+{% endwith %}
+
+<section class="h-100">
+    <div class="container h-100">
+        <div class="row justify-content-sm-center h-100">
+            <div class="col-xxl-4 col-xl-5 col-lg-5 col-md-7 col-sm-9">
+                <div class="text-center my-5">
+                    <h1 class="fw-bold mb-4">Rospatent DB</h1>
+                </div>
+                <div class="card shadow-lg">
+                    <div class="card-body p-5">
+                        <h4 class="fs-4 card-title fw-bold mb-4">Login</h4>
+                        <form method="POST" class="needs-validation" novalidate="" autocomplete="off" action="/login">
+                            <div class="mb-3">
+                                <label class="mb-2 text-muted">Имя пользователя</label>
+                                <input id="username" type="text" class="form-control" name="username" value="" required
+                                    autofocus>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="mb-2 text-muted">
+                                    <label class="text-muted" for="password">Пароль</label>
+                                </div>
+                                <input id="password" type="password" class="form-control" name="password" required>
+                            </div>
+                            <button class="btn btn-primary ms-auto">
+                                Вход
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

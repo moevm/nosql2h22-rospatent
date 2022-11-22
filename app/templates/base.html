@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Rospatent Database</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename= 'css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename= 'css/bootstrap.min.css') }}">
+    <script src="{{ url_for('static', filename= 'js/jquery.min.js') }}" ></script>
+    <script src="{{ url_for('static', filename= 'js/bootstrap.min.js') }}"></script>
+</head>
+
+<body>
+    <div id="navbar_inner">
+        <div id="navbar_middle">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+                <a class="navbar-brand" href="#">
+                    Rospatent DB
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+                    aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div id="navbarNavAltMarkup" class="collapse navbar-collapse">
+                    <div class="navbar-nav">
+                        <a class="nav-link active">База данных</a>
+                        <a class="nav-link active">Операции над данными</a>
+                        <a class="nav-link active">Вход</a>
+                        <a class="nav-link active">Выход</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    {% block content %}
+    {% endblock %}
+
+</body>
+
+
+</html>

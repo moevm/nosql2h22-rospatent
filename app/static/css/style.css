@@ -1,29 +1,25 @@
-h1 {
-    border: 2px #eee solid;
-    color: blue;
-    text-align: center;
-    padding: 10px;
-}
-
 .table {
 	width: 100%;
 	margin-bottom: 20px;
 	border: 1px solid #dddddd;
-	border-collapse: collapse; 
+	border-collapse: collapse;
 }
+
 .table th {
 	font-weight: bold;
 	padding: 5px;
 	background: #efefef;
 	border: 1px solid #dddddd;
 }
+
 .table td {
 	border: 1px solid #dddddd;
 	padding: 5px;
 }
 
 .button {
-	background-color: #4CAF50; /* Green */
+	background-color: #4CAF50;
+	/* Green */
 	border: none;
 	color: white;
 	padding: 15px 32px;
