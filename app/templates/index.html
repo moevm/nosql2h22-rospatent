@@ -1,24 +1,34 @@
 {% extends "base.html" %}
 {% block content %}
-<form action="/adduser">
+<form action="/addpatent">
     <input type="submit" value="Add Item"/>
 </form>
 
-<table class="table">
+<table id="data" class="table">
     <thead>
         <tr>
-        <th scope="col">Name</th>
-        <th scope="col">Password</th>
+        {% for field in fields %}
+            <th scope="col">{{ field }}</th>
+        {% endfor %}
         </tr>
     </thead>
     <tbody>
-        {% for item in items %}
-            <tr>
-                <td>{{ item.username }}</th>
-                <td>{{ item.password }}</td>
-            </tr>
-        {% endfor %}
     </tbody>
 </table>
+{% endblock %}
 
+{% block scripts %}
+  <script>
+    $(document).ready(function () {
+        let cols = [];
+        {% for field in fields %}
+            cols.push({data: '{{ field }}'.replaceAll(' ', '_')});
+        {% endfor %}
+        $('#data').DataTable({
+            ajax: '/api/data',
+            serverSide: true,
+            columns: cols,
+        });
+    });
+  </script>
 {% endblock %}
