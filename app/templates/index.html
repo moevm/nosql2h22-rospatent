@@ -1,8 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
+{% if current_user.is_authenticated %}
+User {{current_user.username}} now can:
 <form action="/addpatent">
     <input type="submit" value="Add Item"/>
 </form>
+{% endif %}
 
 <table id="data" class="table">
     <thead>
