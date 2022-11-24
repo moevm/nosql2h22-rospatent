@@ -1,32 +1,22 @@
 {% extends "base.html" %}
 
-{% block scripts %}
+{% block content %}
 <body>
-  <h2>Patent Info</h2>
-  <form action="" method = "POST", id = "form_add">
-      <script>
-          {% for field in fields %}
-              parent = document.getElementById("form_add")
-              div = document.createElement('div')
-              div.className += "form-group row"
-              field_name = '{{field}}'.replaceAll(" ", "_");
-              label = document.createElement('label')
-              label.htmlFor = field_name
-              label.innerHTML = String(field_name)
-              div.appendChild(label)
-
-              input = document.createElement('input')
-              input.type = "text"
-              input.className = "form-control"
-              input.name = field_name
-              input.id=field_name
-              div.appendChild(input)
-
-              parent.appendChild(div)
-          {% endfor %}
-      </script>
-      <input type="submit" class="button" value="Add"/>
-      <button class="button" href="/">Cancel</button>
-  </form>
+    <h2>Patent Info</h2>
+    <form action="" method = "POST", id = "form_add">
+        {{ form.hidden_tag() }}
+        <table>
+        {% for field in form %}
+            <tr>
+                {% if (field.type != "SubmitField" and field.type != "CSRFTokenField") %}
+                    <th>{{ field.label() }}</th>
+                    <td>{{ field() }}</td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+        </table>
+        {{ form.submit() }}
+        <button class="button" href="/">Cancel</button>
+    </form>
 </body>
 {%endblock%}
