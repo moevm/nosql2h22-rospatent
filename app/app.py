@@ -134,17 +134,21 @@ def login_post():
     user = User.objects(username=username).first()
     #users.find_one({"username" : username})
     print(user)
-    if not user or user['password'] != password:
-        flash('Please check your login details and try again.')
+    if not user:
+        flash('Такого пользователя не существует!')
+        return redirect('/login')
+    if user['password'] != password:
+        flash('Неправильный пароль!')
         return redirect('/login')
     login_user(user)
 
     return redirect('/')
 
-
-@app.route("/logout", methods=["POST", "GET"])
+@login_required
+@app.route("/logout")
 def logout():
-    return 'Logout'
+    logout_user()
+    return redirect('/')
 
 
 if(__name__ == "__main__"):
