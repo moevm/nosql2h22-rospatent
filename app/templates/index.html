@@ -7,6 +7,25 @@ User {{current_user.username}} now can:
 </form>
 {% endif %}
 
+<button onclick="get_csv()" style="margin-left: 51%">Выгрузить базу данных  :З</button>
+
+  <script>
+    function get_csv() {
+        $.get("/api/get_csv", function(csvContent) {
+            alert("Data Loaded: " + csvContent);
+            const blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8,'})
+            url = window.URL.createObjectURL(blob);
+            var a = document.createElement("a");
+            document.body.appendChild(a);
+            a.style = "display: none";
+            a.href = url;
+            a.download = "papers_please.csv";
+            a.click();
+            window.URL.revokeObjectURL(url);
+        });
+    }
+  </script>
+
 <table id="data" class="table">
     <thead>
         <tr>

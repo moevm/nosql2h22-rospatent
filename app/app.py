@@ -1,10 +1,9 @@
 from wtforms import DecimalField, StringField, BooleanField, DateField, SubmitField
-from flask import Flask, render_template, request, redirect, flash
+from flask import Flask, render_template, request, redirect, flash, Response
 from flask_mongoengine import MongoEngine, Document
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
-
-from mongoengine.queryset.visitor import Q
+import csv
 
 app = Flask(__name__)
 
@@ -14,6 +13,7 @@ app.config['MONGODB_SETTINGS'] = {
 
 db = MongoEngine(app)
 app.config['SECRET_KEY'] = 'Trudy'
+
 
 # Authorization
 
@@ -37,6 +37,7 @@ def load_user(user_id):
 User.drop_collection()
 User(username="admin", password="123").save()
 User(username="chel", password="321").save()
+
 
 # Patents db
 
@@ -75,38 +76,25 @@ class Patent(UserMixin, db.Document):
 
 # patents collection
 Patent.drop_collection()
-Patent(registration_number="950396", registration_date="1995-11-09", application_number="0000950377",
-       application_date="1995-10-19",
+Patent(registration_number="950396", registration_date="1995-11-09",application_number="0000950377",application_date="1995-10-19",
        authors="Тюхов Борис Петрович (RU) Ильиченкова Зоя Викторовна  (RU) Федосеева Татьяна Леонидовна (RU)",
-       authors_count=3, right_holders="Тюхов Борис Петрович (RU)", contact_to_third_parties="", program_name="",
-       creation_year=None,
-       registration_publish_date="1996-03-20", registration_publish_number=1, actual=True,
-       publication_URL="http://www1.fips.ru/fips_servl/fips_servlet?DB=EVM&DocNumber=950396").save()
+       authors_count=3, right_holders="Тюхов Борис Петрович (RU)", contact_to_third_parties="",program_name="",creation_year=None,
+       registration_publish_date="1996-03-20", registration_publish_number=1,actual=True,publication_URL="http://www1.fips.ru/fips_servl/fips_servlet?DB=EVM&DocNumber=950396").save()
 
-Patent(registration_number="970019", registration_date="1997-01-17", application_number="0000960509",
-       application_date="1996-12-20",
+Patent(registration_number="970019", registration_date="1997-01-17",application_number="0000960509",application_date="1996-12-20",
        authors="Колдина А.И. (RU) Макаров С.В. (RU) Александрова Г.М. (RU) Иванов В.Г. (RU) Высоцкая Н.В. (RU) Лебедев С.Н. (RU)",
-       authors_count=6, right_holders="Чарский Виталий Владимирович (RU) Иванов Владимир Георгиевич (RU)",
-       contact_to_third_parties="",
-       program_name="Комплексная система информационного обеспечения учета и движения кадров", creation_year=None,
-       registration_publish_date="1997-06-20", registration_publish_number=2, actual=True,
-       publication_URL="http://www1.fips.ru/fips_servl/fips_servlet?DB=EVM&DocNumber=970019").save()
+       authors_count=6, right_holders="Чарский Виталий Владимирович (RU) Иванов Владимир Георгиевич (RU)", contact_to_third_parties="",program_name="Комплексная система информационного обеспечения учета и движения кадров",creation_year=None,
+       registration_publish_date="1997-06-20", registration_publish_number=2,actual=True,publication_URL="http://www1.fips.ru/fips_servl/fips_servlet?DB=EVM&DocNumber=970019").save()
 
-Patent(registration_number="950396", registration_date="1995-11-09", application_number="19951019",
+Patent(registration_number="950396", registration_date="1995-11-09",application_number="19951019",
        authors="Тюхов Борис Петрович (RU) Ильиченкова Зоя Викторовна  (RU) Федосеева Татьяна Леонидовна (RU)",
-       authors_count=3, right_holders="Тюхов Борис Петрович (RU)", contact_to_third_parties="", program_name="",
-       creation_year=None,
-       registration_publish_date="1996-03-20", registration_publish_number=1, actual=True,
-       publication_URL="http://www1.fips.ru/fips_servl/fips_servlet?DB=EVM&DocNumber=950396").save()
+       authors_count=3, right_holders="Тюхов Борис Петрович (RU)", contact_to_third_parties="",program_name="",creation_year=None,
+       registration_publish_date="1996-03-20", registration_publish_number=1,actual=True,publication_URL="http://www1.fips.ru/fips_servl/fips_servlet?DB=EVM&DocNumber=950396").save()
 
-Patent(registration_number="970019", registration_date="1997-01-17", application_number="0000960509",
-       application_date="1996-12-20",
+Patent(registration_number="970019", registration_date="1997-01-17",application_number="0000960509",application_date="1996-12-20",
        authors="Колдина А.И. (RU) Макаров С.В. (RU) Александрова Г.М. (RU) Иванов В.Г. (RU) Высоцкая Н.В. (RU) Лебедев С.Н. (RU)",
-       authors_count=6, right_holders="Чарский Виталий Владимирович (RU) Иванов Владимир Георгиевич (RU)",
-       contact_to_third_parties="",
-       program_name="Комплексная система информационного обеспечения учета и движения кадров", creation_year=None,
-       registration_publish_date="1997-06-20", registration_publish_number=2, actual=True,
-       publication_URL="http://www1.fips.ru/fips_servl/fips_servlet?DB=EVM&DocNumber=970019").save()
+       authors_count=6, right_holders="Чарский Виталий Владимирович (RU) Иванов Владимир Георгиевич (RU)", contact_to_third_parties="",program_name="Комплексная система информационного обеспечения учета и движения кадров",creation_year=None,
+       registration_publish_date="1997-06-20", registration_publish_number=2,actual=True,publication_URL="http://www1.fips.ru/fips_servl/fips_servlet?DB=EVM&DocNumber=970019").save()
 
 
 class AddPatentForm(FlaskForm):
@@ -126,7 +114,6 @@ class AddPatentForm(FlaskForm):
     publication_URL = StringField()
     submit = SubmitField("Add")
 
-
 # Routes
 
 
@@ -139,26 +126,32 @@ def main():
 def data():
     query = Patent.objects()
 
-    # search filter
-    search = request.args.get('search[value]')
-    if search:
-        query = query(
-            Q(registration_number__contains=search) |
-            Q(application_number__contains=search) |
-            Q(authors__contains=search) |
-            Q(right_holders__contains=search) |
-            Q(contact_to_third_parties__contains=search) |
-            Q(program_name__contains=search) |
-            Q(publication_URL__contains=search))
-    total_filtered = query.count()
-
     # response
     return {
         'data': [item.to_dict() for item in query],
         'recordsTotal': len(query),
-        'recordsFiltered': total_filtered,
+        'recordsFiltered': len(query),
         'draw': request.args.get('draw', type=int),
     }
+
+
+@app.route('/api/get_csv')
+def data_for_export():
+    query = Patent.objects()
+    data_for_csv = [item.to_dict() for item in query]
+    with open('papers.csv', 'w', encoding='UTF8', newline='') as f:
+        writer = csv.DictWriter(f, fieldnames=data_for_csv[0].keys())
+        writer.writeheader()
+        writer.writerows(data_for_csv)
+    print(f'Saved to csv file: papers.csv')
+    with open("papers.csv") as fp:
+        csvshka = fp.read()
+    # response
+    return Response(
+        csvshka,
+        mimetype="text/csv",
+        headers={"Content-disposition":
+                     "attachment; filename=papers_plesse.csv"})
 
 
 @app.route("/adduser", methods=['GET', 'POST'])
@@ -180,6 +173,9 @@ def addpatent():
         form = AddPatentForm()
         return render_template("addpatent.html", form=form)
     if request.method == 'POST':
+        # args = {}
+        # for field in fields:
+        #     args[field.replace(' ', '_')] = request.form[field.replace(' ', '_')]
         form = AddPatentForm()
         Patent(registration_number=form.registration_number.data,
                registration_date=form.registration_date.data,
@@ -211,7 +207,7 @@ def login_post():
     password = request.form.get('password')
 
     user = User.objects(username=username).first()
-    # users.find_one({"username" : username})
+    #users.find_one({"username" : username})
     print(user)
     if not user:
         flash('Такого пользователя не существует!')
@@ -231,5 +227,5 @@ def logout():
     return redirect('/')
 
 
-if (__name__ == "__main__"):
+if(__name__ == "__main__"):
     app.run(host='0.0.0.0', port=5001)
