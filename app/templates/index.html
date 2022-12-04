@@ -3,13 +3,17 @@
 {% if current_user.is_authenticated %}
 User {{current_user.username}} now can:
 <form action="/addpatent">
-    <input type="submit" value="Add Item"/>
+    <input type="submit" value="Add Item" />
 </form>
 {% endif %}
 
-<button onclick="get_csv()" style="margin-left: 51%">Выгрузить базу данных  :З</button>
+<button onclick="get_csv()" style="margin-left: 51%">Выгрузить базу данных :З</button>
+<form id="csv_file" enctype="text/csv" style="margin-left: 51%">
+    <input name="file" type="file" />
+    <input type="button" value="Загрузить csv 👉👈" onclick="add_csv_to_db()" />
+</form>
 
-  <script>
+<script>
     function get_csv() {
         var searcher = ""
         var node_list = document.getElementsByTagName('input');
@@ -18,10 +22,13 @@ User {{current_user.username}} now can:
             if (node.getAttribute('type') == "search") {
                 if (node.value != "") {
                     searcher = "?searcher=" + node.value;
-                    break; }}}
+                    break;
+                }
+            }
+        }
 
-        $.get("/api/get_csv" + searcher, function(csvContent) {
-            const blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8,'})
+        $.get("/api/get_csv" + searcher, function (csvContent) {
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8,' })
             url = window.URL.createObjectURL(blob);
             var a = document.createElement("a");
             document.body.appendChild(a);
@@ -32,14 +39,27 @@ User {{current_user.username}} now can:
             window.URL.revokeObjectURL(url);
         });
     }
-  </script>
+
+    function add_csv_to_db(){
+        $.ajax({
+            url: '/api/add_csv',
+            type : 'POST',
+            data : new FormData($('#csv_file')[0]),
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+    }
+
+
+</script>
 
 <table id="data" class="table">
     <thead>
         <tr>
-        {% for field in fields %}
+            {% for field in fields %}
             <th scope="col">{{ field }}</th>
-        {% endfor %}
+            {% endfor %}
         </tr>
     </thead>
     <tbody>
@@ -48,11 +68,11 @@ User {{current_user.username}} now can:
 {% endblock %}
 
 {% block scripts %}
-  <script>
+<script>
     $(document).ready(function () {
         let cols = [];
         {% for field in fields %}
-            cols.push({data: '{{ field }}'.replaceAll(' ', '_')});
+        cols.push({ data: '{{ field }}'.replaceAll(' ', '_') });
         {% endfor %}
         $('#data').DataTable({
             ajax: '/api/data',
@@ -60,5 +80,5 @@ User {{current_user.username}} now can:
             columns: cols,
         });
     });
-  </script>
+</script>
 {% endblock %}

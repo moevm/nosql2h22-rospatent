@@ -3,6 +3,9 @@ from flask import Flask, render_template, request, redirect, flash, Response
 from flask_mongoengine import MongoEngine
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
+import pandas as pd
+from io import StringIO
+
 
 from mongoengine.queryset.visitor import Q
 
@@ -22,16 +25,6 @@ app.config['MONGODB_SETTINGS'] = {
 
 db = MongoEngine(app)
 app.config['SECRET_KEY'] = 'Trudy'
-
-app = Flask(__name__)
-
-app.config['MONGODB_SETTINGS'] = {
-    "db": "rospatent"
-}
-
-db = MongoEngine(app)
-app.config['SECRET_KEY'] = 'Trudy'
-
 
 # Authorization
 
@@ -196,6 +189,7 @@ def data_for_export():
             Q(publication_URL__contains=search))
 
     data_for_csv = [item.to_dict() for item in query]
+    print(data_for_csv)
     with open('papers.csv', 'w', encoding='UTF8', newline='') as f:
         writer = csv.DictWriter(f, fieldnames=data_for_csv[0].keys())
         writer.writeheader()
@@ -203,6 +197,7 @@ def data_for_export():
     print(f'Saved to csv file: papers.csv')
     with open("papers.csv") as fp:
         csvshka = fp.read()
+    print(csvshka)
     # response
     return Response(
         csvshka,
@@ -283,6 +278,15 @@ def logout():
     logout_user()
     return redirect('/')
 
+@app.route("/api/add_csv", methods=["POST"])
+def add_csv():
+    print("hi fellos")
+    file = request.files["file"] 
+    file_pd = pd.read_csv(StringIO(str(file.read(),'utf-8')))
+    patent_instances = []
+    for row_dict in file_pd.to_dict(orient="records"):
+        patent_instances.append(Patent(**row_dict))
+    Patent.objects.insert(patent_instances, load_bulk=False)
 
 if(__name__ == "__main__"):
     app.run(host='0.0.0.0', port=5001)
