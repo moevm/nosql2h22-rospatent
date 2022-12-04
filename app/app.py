@@ -3,6 +3,9 @@ from flask import Flask, render_template, request, redirect, flash, Response
 from flask_mongoengine import MongoEngine, Document
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
+
+from mongoengine.queryset.visitor import Q
+
 import csv
 
 app = Flask(__name__)
@@ -76,25 +79,38 @@ class Patent(UserMixin, db.Document):
 
 # patents collection
 Patent.drop_collection()
-Patent(registration_number="950396", registration_date="1995-11-09",application_number="0000950377",application_date="1995-10-19",
+Patent(registration_number="950396", registration_date="1995-11-09", application_number="0000950377",
+       application_date="1995-10-19",
        authors="Тюхов Борис Петрович (RU) Ильиченкова Зоя Викторовна  (RU) Федосеева Татьяна Леонидовна (RU)",
-       authors_count=3, right_holders="Тюхов Борис Петрович (RU)", contact_to_third_parties="",program_name="",creation_year=None,
-       registration_publish_date="1996-03-20", registration_publish_number=1,actual=True,publication_URL="http://www1.fips.ru/fips_servl/fips_servlet?DB=EVM&DocNumber=950396").save()
+       authors_count=3, right_holders="Тюхов Борис Петрович (RU)", contact_to_third_parties="", program_name="",
+       creation_year=None,
+       registration_publish_date="1996-03-20", registration_publish_number=1, actual=True,
+       publication_URL="http://www1.fips.ru/fips_servl/fips_servlet?DB=EVM&DocNumber=950396").save()
 
-Patent(registration_number="970019", registration_date="1997-01-17",application_number="0000960509",application_date="1996-12-20",
+Patent(registration_number="970019", registration_date="1997-01-17", application_number="0000960509",
+       application_date="1996-12-20",
        authors="Колдина А.И. (RU) Макаров С.В. (RU) Александрова Г.М. (RU) Иванов В.Г. (RU) Высоцкая Н.В. (RU) Лебедев С.Н. (RU)",
-       authors_count=6, right_holders="Чарский Виталий Владимирович (RU) Иванов Владимир Георгиевич (RU)", contact_to_third_parties="",program_name="Комплексная система информационного обеспечения учета и движения кадров",creation_year=None,
-       registration_publish_date="1997-06-20", registration_publish_number=2,actual=True,publication_URL="http://www1.fips.ru/fips_servl/fips_servlet?DB=EVM&DocNumber=970019").save()
+       authors_count=6, right_holders="Чарский Виталий Владимирович (RU) Иванов Владимир Георгиевич (RU)",
+       contact_to_third_parties="",
+       program_name="Комплексная система информационного обеспечения учета и движения кадров", creation_year=None,
+       registration_publish_date="1997-06-20", registration_publish_number=2, actual=True,
+       publication_URL="http://www1.fips.ru/fips_servl/fips_servlet?DB=EVM&DocNumber=970019").save()
 
-Patent(registration_number="950396", registration_date="1995-11-09",application_number="19951019",
+Patent(registration_number="950396", registration_date="1995-11-09", application_number="19951019",
        authors="Тюхов Борис Петрович (RU) Ильиченкова Зоя Викторовна  (RU) Федосеева Татьяна Леонидовна (RU)",
-       authors_count=3, right_holders="Тюхов Борис Петрович (RU)", contact_to_third_parties="",program_name="",creation_year=None,
-       registration_publish_date="1996-03-20", registration_publish_number=1,actual=True,publication_URL="http://www1.fips.ru/fips_servl/fips_servlet?DB=EVM&DocNumber=950396").save()
+       authors_count=3, right_holders="Тюхов Борис Петрович (RU)", contact_to_third_parties="", program_name="",
+       creation_year=None,
+       registration_publish_date="1996-03-20", registration_publish_number=1, actual=True,
+       publication_URL="http://www1.fips.ru/fips_servl/fips_servlet?DB=EVM&DocNumber=950396").save()
 
-Patent(registration_number="970019", registration_date="1997-01-17",application_number="0000960509",application_date="1996-12-20",
+Patent(registration_number="970019", registration_date="1997-01-17", application_number="0000960509",
+       application_date="1996-12-20",
        authors="Колдина А.И. (RU) Макаров С.В. (RU) Александрова Г.М. (RU) Иванов В.Г. (RU) Высоцкая Н.В. (RU) Лебедев С.Н. (RU)",
-       authors_count=6, right_holders="Чарский Виталий Владимирович (RU) Иванов Владимир Георгиевич (RU)", contact_to_third_parties="",program_name="Комплексная система информационного обеспечения учета и движения кадров",creation_year=None,
-       registration_publish_date="1997-06-20", registration_publish_number=2,actual=True,publication_URL="http://www1.fips.ru/fips_servl/fips_servlet?DB=EVM&DocNumber=970019").save()
+       authors_count=6, right_holders="Чарский Виталий Владимирович (RU) Иванов Владимир Георгиевич (RU)",
+       contact_to_third_parties="",
+       program_name="Комплексная система информационного обеспечения учета и движения кадров", creation_year=None,
+       registration_publish_date="1997-06-20", registration_publish_number=2, actual=True,
+       publication_URL="http://www1.fips.ru/fips_servl/fips_servlet?DB=EVM&DocNumber=970019").save()
 
 
 class AddPatentForm(FlaskForm):
@@ -126,11 +142,24 @@ def main():
 def data():
     query = Patent.objects()
 
+    # search filter
+    search = request.args.get('search[value]')
+    if search:
+        query = query(
+            Q(registration_number__contains=search) |
+            Q(application_number__contains=search) |
+            Q(authors__contains=search) |
+            Q(right_holders__contains=search) |
+            Q(contact_to_third_parties__contains=search) |
+            Q(program_name__contains=search) |
+            Q(publication_URL__contains=search))
+    total_filtered = query.count()
+
     # response
     return {
         'data': [item.to_dict() for item in query],
         'recordsTotal': len(query),
-        'recordsFiltered': len(query),
+        'recordsFiltered': total_filtered,
         'draw': request.args.get('draw', type=int),
     }
 
@@ -138,6 +167,19 @@ def data():
 @app.route('/api/get_csv')
 def data_for_export():
     query = Patent.objects()
+
+    # search filter
+    search = request.args.get('searcher')
+    if search:
+        query = query(
+            Q(registration_number__contains=search) |
+            Q(application_number__contains=search) |
+            Q(authors__contains=search) |
+            Q(right_holders__contains=search) |
+            Q(contact_to_third_parties__contains=search) |
+            Q(program_name__contains=search) |
+            Q(publication_URL__contains=search))
+
     data_for_csv = [item.to_dict() for item in query]
     with open('papers.csv', 'w', encoding='UTF8', newline='') as f:
         writer = csv.DictWriter(f, fieldnames=data_for_csv[0].keys())
