@@ -1,0 +1,15 @@
+version: "3"
+services:
+  app:
+    build: ./app/
+    command: python3 -u app/app.py --host db
+    volumes:
+    - .:/app
+    ports:
+      - "5001:5001"
+    links:
+      - db
+  db:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
