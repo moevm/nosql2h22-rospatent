@@ -74,10 +74,24 @@ User {{current_user.username}} now can:
         {% for field in fields %}
         cols.push({ data: '{{ field }}'.replaceAll(' ', '_') });
         {% endfor %}
-        $('#data').DataTable({
+        let table = $('#data').DataTable({
             ajax: '/api/data',
             serverSide: true,
             columns: cols,
+        });
+
+        $('#data thead th').each(function () {
+            var title = $(this).text();
+            $(this).html(title+' <input type="text" class="col-search-input" placeholder="Search ' + title + '" />');
+        });
+        
+        table.columns().every(function (colId) {
+            var table = this;
+            $('input', this.header()).on('keyup change', function () {
+                if (table.column(colId).search() !== this.value) {
+                	   table.column(colId).search(this.value).draw();
+                }
+            });
         });
     });
 </script>

@@ -5,7 +5,7 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 from flask_wtf import FlaskForm
 import pandas as pd
 from io import StringIO
-
+import datetime
 
 from mongoengine.queryset.visitor import Q
 
@@ -161,6 +161,74 @@ def data():
             Q(contact_to_third_parties__contains=search) |
             Q(program_name__contains=search) |
             Q(publication_URL__contains=search))
+    
+    for i in range(len(fields)):
+        search = request.args.get('columns[' + str(i) + '][search][value]');            
+        if search != None and search != '':
+            if i == 0:
+                query = query(Q(registration_number__contains=search))
+            elif i == 1:
+                date = 0
+                try:
+                    date = datetime.datetime.fromisoformat(search)
+                    query = query(Q(registration_date=date))
+                except ValueError:
+                    query = query(Q(registration_date__contains=search))
+            elif i == 2:
+                query = query(Q(application_number__contains=search))
+            elif i == 3:
+                date = 0
+                try:
+                    date = datetime.datetime.fromisoformat(search)
+                    query = query(Q(application_date=date))
+                except ValueError:
+                    query = query(Q(application_date__contains=search))
+            elif i == 4:
+                query = query(Q(authors__contains=search))
+            elif i == 5:
+                n = -1
+                try:
+                    n = int(search)
+                    query = query(Q(authors_count=n))
+                except ValueError:
+                    query = query(Q(authors_count=-1))
+            elif i == 6:
+                query = query(Q(right_holders_contains=search))
+            elif i == 7:
+                query = query(Q(contact_to_third_parties__contains=search))
+            elif i == 8:
+                query = query(Q(prohram_name__contains=search))
+            elif i == 9:
+                n = -1
+                try:
+                    n = int(search)
+                    query = query(Q(creation_year=n))
+                except ValueError:
+                    query = query(Q(creation_year=-1))
+            elif i == 10:
+                date = 0
+                try:
+                    date = datetime.datetime.fromisoformat(search)
+                    query = query(Q(registration_publish_date__contains=date))
+                except ValueError:
+                    query = query(Q(registration_publish_date__contains=search))
+            elif i == 11:
+                n = -1
+                try:
+                    n = int(search)
+                    query = query(Q(registration_publish_number=n))
+                except ValueError:
+                    query = query(Q(registration_publish_number=-1))
+            elif i == 12:
+                if search == 'True':
+                    query = query(Q(actual=True))
+                elif search == 'False':
+                    query = query(Q(actual=False))
+                else:
+                    query = query(Q(actual__contains=search))
+            elif i == 13:
+                query = query(Q(publication_URL__contains=search))
+
     total_filtered = query.count()
 
     # response
