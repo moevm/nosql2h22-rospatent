@@ -150,20 +150,20 @@ def main():
 def data():
     query = Patent.objects()
 
-    # search filter
-    search = request.args.get('search[value]')
-    if search:
-        query = query(
-            Q(registration_number__contains=search) |
-            Q(application_number__contains=search) |
-            Q(authors__contains=search) |
-            Q(right_holders__contains=search) |
-            Q(contact_to_third_parties__contains=search) |
-            Q(program_name__contains=search) |
-            Q(publication_URL__contains=search))
-    
+    # # search filter
+    # search = request.args.get('search[value]')
+    # if search:
+    #     query = query(
+    #         Q(registration_number__contains=search) |
+    #         Q(application_number__contains=search) |
+    #         Q(authors__contains=search) |
+    #         Q(right_holders__contains=search) |
+    #         Q(contact_to_third_parties__contains=search) |
+    #         Q(program_name__contains=search) |
+    #         Q(publication_URL__contains=search))
+
     for i in range(len(fields)):
-        search = request.args.get('columns[' + str(i) + '][search][value]');            
+        search = request.args.get('columns[' + str(i) + '][search][value]')
         if search != None and search != '':
             if i == 0:
                 query = query(Q(registration_number__contains=search))
@@ -211,7 +211,8 @@ def data():
                     date = datetime.datetime.fromisoformat(search)
                     query = query(Q(registration_publish_date__contains=date))
                 except ValueError:
-                    query = query(Q(registration_publish_date__contains=search))
+                    query = query(
+                        Q(registration_publish_date__contains=search))
             elif i == 11:
                 n = -1
                 try:
@@ -229,15 +230,32 @@ def data():
             elif i == 13:
                 query = query(Q(publication_URL__contains=search))
 
-    total_filtered = query.count()
-
-    # response
-    return {
-        'data': [item.to_dict() for item in query],
-        'recordsTotal': len(query),
-        'recordsFiltered': total_filtered,
-        'draw': request.args.get('draw', type=int),
-    }
+    if request.args.get('export') == 'True':
+        data_for_csv = [item.to_dict() for item in query]
+        print(data_for_csv)
+        with open('papers.csv', 'w', encoding='UTF8', newline='') as f:
+            writer = csv.DictWriter(f, fieldnames=data_for_csv[0].keys())
+            writer.writeheader()
+            writer.writerows(data_for_csv)
+        print(f'Saved to csv file: papers.csv')
+        with open("papers.csv") as fp:
+            csvshka = fp.read()
+        print(csvshka)
+        # response
+        return Response(
+            csvshka,
+            mimetype="text/csv",
+            headers={"Content-disposition":
+                    "attachment; filename=papers_plesse.csv"})
+    else:
+        total_filtered = query.count()
+        print("helo")
+        return {
+            'data': [item.to_dict() for item in query],
+            'recordsTotal': len(query),
+            'recordsFiltered': total_filtered,
+            'draw': request.args.get('draw', type=int),
+        }
 
 
 @app.route('/api/get_csv')
@@ -245,7 +263,8 @@ def data_for_export():
     query = Patent.objects()
 
     # search filter
-    search = request.args.get('searcher')
+    search = request.args.get('export')
+    print(request)
     if search:
         query = query(
             Q(registration_number__contains=search) |
@@ -271,7 +290,7 @@ def data_for_export():
         csvshka,
         mimetype="text/csv",
         headers={"Content-disposition":
-                     "attachment; filename=papers_plesse.csv"})
+                 "attachment; filename=papers_plesse.csv"})
 
 
 @app.route("/adduser", methods=['GET', 'POST'])
@@ -346,15 +365,17 @@ def logout():
     logout_user()
     return redirect('/')
 
+
 @app.route("/api/add_csv", methods=["POST"])
 def add_csv():
     print("hi fellos")
-    file = request.files["file"] 
-    file_pd = pd.read_csv(StringIO(str(file.read(),'utf-8')))
+    file = request.files["file"]
+    file_pd = pd.read_csv(StringIO(str(file.read(), 'utf-8')))
     patent_instances = []
     for row_dict in file_pd.to_dict(orient="records"):
         patent_instances.append(Patent(**row_dict))
     Patent.objects.insert(patent_instances, load_bulk=False)
+
 
 if(__name__ == "__main__"):
     app.run(host='0.0.0.0', port=5001)

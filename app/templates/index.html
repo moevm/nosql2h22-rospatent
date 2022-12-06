@@ -15,19 +15,15 @@ User {{current_user.username}} now can:
 
 <script>
     function get_csv() {
-        var searcher = ""
-        var node_list = document.getElementsByTagName('input');
-        for (var i = 0; i < node_list.length; i++) {
-            var node = node_list[i];
-            if (node.getAttribute('type') == "search") {
-                if (node.value != "") {
-                    searcher = "?searcher=" + node.value;
-                    break;
-                }
-            }
+        let searcher = "export=True";
+        let number_of_inputs = $("#data thead tr th").length;//document.getElementById("data").getElementsByTagName('thead').children;
+        console.log(number_of_inputs)
+        for (let i = 0; i < number_of_inputs; i++) {
+            let node = document.getElementById('search_' + i.toString());
+            searcher += '&columns[' + i.toString() + '][search][value]='+node.value;
         }
 
-        $.get("/api/get_csv" + searcher, function (csvContent) {
+        $.get("/api/data?" + searcher, function (csvContent) {
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8,' })
             url = window.URL.createObjectURL(blob);
             var a = document.createElement("a");
@@ -40,11 +36,11 @@ User {{current_user.username}} now can:
         });
     }
 
-    function add_csv_to_db(){
+    function add_csv_to_db() {
         $.ajax({
             url: '/api/add_csv',
-            type : 'POST',
-            data : new FormData($('#csv_file')[0]),
+            type: 'POST',
+            data: new FormData($('#csv_file')[0]),
             cache: false,
             contentType: false,
             processData: false
@@ -80,16 +76,19 @@ User {{current_user.username}} now can:
             columns: cols,
         });
 
+        let input_counter = 0;
         $('#data thead th').each(function () {
             var title = $(this).text();
-            $(this).html(title+' <input type="text" class="col-search-input" placeholder="Search ' + title + '" />');
+            $(this).html(title + ' <input id="search_' + input_counter.toString() + '" type="text" class="col-search-input" placeholder="Search ' + title + '" />');
+            input_counter += 1;
         });
-        
+
+
         table.columns().every(function (colId) {
             var table = this;
             $('input', this.header()).on('keyup change', function () {
                 if (table.column(colId).search() !== this.value) {
-                	   table.column(colId).search(this.value).draw();
+                    table.column(colId).search(this.value).draw();
                 }
             });
         });
