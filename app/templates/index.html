@@ -79,7 +79,13 @@ User {{current_user.username}} now can:
         let input_counter = 0;
         $('#data thead th').each(function () {
             var title = $(this).text();
-            $(this).html(title + ' <input id="search_' + input_counter.toString() + '" type="text" class="col-search-input" placeholder="Search ' + title + '" />');
+            if (input_counter != 1 && input_counter != 3 && input_counter != 10) {
+                $(this).html(title + ' <input id="search_' + input_counter.toString() + '" type="text" class="col-search-input" placeholder="Search ' + title + '" />');
+            }
+            else {
+                $(this).html(title + '<br><input id="date_from_' + input_counter.toString() + '" type="date" class="col-search-input"/><br>'+
+                    'to <input id="date_to_' + input_counter.toString() + '" type="date" class="col-search-input"/>');
+            }
             input_counter += 1;
         });
 
@@ -88,7 +94,20 @@ User {{current_user.username}} now can:
             var table = this;
             $('input', this.header()).on('keyup change', function () {
                 if (table.column(colId).search() !== this.value) {
-                    table.column(colId).search(this.value).draw();
+                    let res_value = this.value
+                    if ((this.id).startsWith("date_")) {
+                        fromdate = $("#date_from_"+colId)[0].value
+                        todate = $("#date_to_"+colId)[0].value
+                        let f = new Date(fromdate);
+                        let t = new Date(todate);
+                        if (f > t) {
+                            alert("First date bigger than second!")
+                            return
+                        }
+                        res_value = fromdate + ";" + todate
+                    }
+
+                    table.column(colId).search(res_value).draw();
                 }
             });
         });

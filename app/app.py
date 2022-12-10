@@ -12,16 +12,16 @@ from mongoengine.queryset.visitor import Q
 import csv
 import argparse
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--host', type=str, required=False)
-args = parser.parse_args()
+# parser = argparse.ArgumentParser()
+# parser.add_argument('--host', type=str, required=False)
+# args = parser.parse_args()
 
 app = Flask(__name__)
 
-app.config['MONGODB_SETTINGS'] = {
-    "db": "rospatent",
-    "host": args.host if args.host else "localhost"
-}
+# app.config['MONGODB_SETTINGS'] = {
+#     "db": "rospatent",
+#     "host": args.host if args.host else "localhost"
+# }
 
 db = MongoEngine(app)
 app.config['SECRET_KEY'] = 'Trudy'
@@ -150,17 +150,17 @@ def main():
 def data():
     query = Patent.objects()
 
-    # # search filter
-    # search = request.args.get('search[value]')
-    # if search:
-    #     query = query(
-    #         Q(registration_number__contains=search) |
-    #         Q(application_number__contains=search) |
-    #         Q(authors__contains=search) |
-    #         Q(right_holders__contains=search) |
-    #         Q(contact_to_third_parties__contains=search) |
-    #         Q(program_name__contains=search) |
-    #         Q(publication_URL__contains=search))
+    # search filter
+    search = request.args.get('search[value]')
+    if search:
+        query = query(
+            Q(registration_number__contains=search) |
+            Q(application_number__contains=search) |
+            Q(authors__contains=search) |
+            Q(right_holders__contains=search) |
+            Q(contact_to_third_parties__contains=search) |
+            Q(program_name__contains=search) |
+            Q(publication_URL__contains=search))
 
     for i in range(len(fields)):
         search = request.args.get('columns[' + str(i) + '][search][value]')
@@ -168,21 +168,33 @@ def data():
             if i == 0:
                 query = query(Q(registration_number__contains=search))
             elif i == 1:
-                date = 0
                 try:
-                    date = datetime.datetime.fromisoformat(search)
-                    query = query(Q(registration_date=date))
+                    dates = search.split(';')
+                    if len(dates) != 2:
+                        continue
+                    if dates[0] != '':
+                        datefrom = datetime.datetime.fromisoformat(dates[0])
+                        query = query(Q(registration_date__gte=datefrom))
+                    if dates[1] != '':
+                        dateto = datetime.datetime.fromisoformat(dates[1])
+                        query = query(Q(registration_date__lte=dateto))
                 except ValueError:
-                    query = query(Q(registration_date__contains=search))
+                    continue
             elif i == 2:
                 query = query(Q(application_number__contains=search))
             elif i == 3:
-                date = 0
                 try:
-                    date = datetime.datetime.fromisoformat(search)
-                    query = query(Q(application_date=date))
+                    dates = search.split(';')
+                    if len(dates) != 2:
+                        continue
+                    if dates[0] != '':
+                        datefrom = datetime.datetime.fromisoformat(dates[0])
+                        query = query(Q(application_date__gte=datefrom))
+                    if dates[1] != '':
+                        dateto = datetime.datetime.fromisoformat(dates[1])
+                        query = query(Q(application_date__lte=dateto))
                 except ValueError:
-                    query = query(Q(application_date__contains=search))
+                    continue
             elif i == 4:
                 query = query(Q(authors__contains=search))
             elif i == 5:
@@ -206,13 +218,18 @@ def data():
                 except ValueError:
                     query = query(Q(creation_year=-1))
             elif i == 10:
-                date = 0
                 try:
-                    date = datetime.datetime.fromisoformat(search)
-                    query = query(Q(registration_publish_date__contains=date))
+                    dates = search.split(';')
+                    if len(dates) != 2:
+                        continue
+                    if dates[0] != '':
+                        datefrom = datetime.datetime.fromisoformat(dates[0])
+                        query = query(Q(registration_publish_date__gte=datefrom))
+                    if dates[1] != '':
+                        dateto = datetime.datetime.fromisoformat(dates[1])
+                        query = query(Q(registration_publish_date__lte=dateto))
                 except ValueError:
-                    query = query(
-                        Q(registration_publish_date__contains=search))
+                    continue
             elif i == 11:
                 n = -1
                 try:
