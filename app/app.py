@@ -12,16 +12,16 @@ from mongoengine.queryset.visitor import Q
 import csv
 import argparse
 
-# parser = argparse.ArgumentParser()
-# parser.add_argument('--host', type=str, required=False)
-# args = parser.parse_args()
+parser = argparse.ArgumentParser()
+parser.add_argument('--host', type=str, required=False)
+args = parser.parse_args()
 
 app = Flask(__name__)
 
-# app.config['MONGODB_SETTINGS'] = {
-#     "db": "rospatent",
-#     "host": args.host if args.host else "localhost"
-# }
+app.config['MONGODB_SETTINGS'] = {
+    "db": "rospatent",
+    "host": args.host if args.host else "localhost"
+}
 
 db = MongoEngine(app)
 app.config['SECRET_KEY'] = 'Trudy'
