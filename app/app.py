@@ -91,7 +91,7 @@ Patent(registration_number="950396", registration_date="1995-11-09", application
        application_date="1995-10-19",
        authors="Тюхов Борис Петрович (RU) Ильиченкова Зоя Викторовна  (RU) Федосеева Татьяна Леонидовна (RU)",
        authors_count=3, right_holders="Тюхов Борис Петрович (RU)", contact_to_third_parties="", program_name="",
-       creation_year=None,
+       creation_year=1234,
        registration_publish_date="1996-03-20", registration_publish_number=1, actual=True,
        publication_URL="http://www1.fips.ru/fips_servl/fips_servlet?DB=EVM&DocNumber=950396").save()
 
@@ -100,14 +100,14 @@ Patent(registration_number="970019", registration_date="1997-01-17", application
        authors="Колдина А.И. (RU) Макаров С.В. (RU) Александрова Г.М. (RU) Иванов В.Г. (RU) Высоцкая Н.В. (RU) Лебедев С.Н. (RU)",
        authors_count=6, right_holders="Чарский Виталий Владимирович (RU) Иванов Владимир Георгиевич (RU)",
        contact_to_third_parties="",
-       program_name="Комплексная система информационного обеспечения учета и движения кадров", creation_year=None,
+       program_name="Комплексная система информационного обеспечения учета и движения кадров", creation_year=1234,
        registration_publish_date="1997-06-20", registration_publish_number=2, actual=True,
        publication_URL="http://www1.fips.ru/fips_servl/fips_servlet?DB=EVM&DocNumber=970019").save()
 
 Patent(registration_number="950396", registration_date="1995-11-09", application_number="19951019",
        authors="Тюхов Борис Петрович (RU) Ильиченкова Зоя Викторовна  (RU) Федосеева Татьяна Леонидовна (RU)",
        authors_count=3, right_holders="Тюхов Борис Петрович (RU)", contact_to_third_parties="", program_name="",
-       creation_year=None,
+       creation_year=1234,
        registration_publish_date="1996-03-20", registration_publish_number=1, actual=True,
        publication_URL="http://www1.fips.ru/fips_servl/fips_servlet?DB=EVM&DocNumber=950396").save()
 
@@ -116,7 +116,7 @@ Patent(registration_number="970019", registration_date="1997-01-17", application
        authors="Колдина А.И. (RU) Макаров С.В. (RU) Александрова Г.М. (RU) Иванов В.Г. (RU) Высоцкая Н.В. (RU) Лебедев С.Н. (RU)",
        authors_count=6, right_holders="Чарский Виталий Владимирович (RU) Иванов Владимир Георгиевич (RU)",
        contact_to_third_parties="",
-       program_name="Комплексная система информационного обеспечения учета и движения кадров", creation_year=None,
+       program_name="Комплексная система информационного обеспечения учета и движения кадров", creation_year=1234,
        registration_publish_date="1997-06-20", registration_publish_number=2, actual=True,
        publication_URL="http://www1.fips.ru/fips_servl/fips_servlet?DB=EVM&DocNumber=970019").save()
 
@@ -164,7 +164,7 @@ def data():
 
     for i in range(len(fields)):
         search = request.args.get('columns[' + str(i) + '][search][value]')
-        if search != None and search != '':
+        if search != None and search != '' and search != 'undefined':
             if i == 0:
                 query = query(Q(registration_number__contains=search))
             elif i == 1:
@@ -205,11 +205,11 @@ def data():
                 except ValueError:
                     query = query(Q(authors_count=-1))
             elif i == 6:
-                query = query(Q(right_holders_contains=search))
+                query = query(Q(right_holders__contains=search))
             elif i == 7:
                 query = query(Q(contact_to_third_parties__contains=search))
             elif i == 8:
-                query = query(Q(prohram_name__contains=search))
+                query = query(Q(program_name__contains=search))
             elif i == 9:
                 n = -1
                 try:
@@ -255,7 +255,7 @@ def data():
             writer.writeheader()
             writer.writerows(data_for_csv)
         print(f'Saved to csv file: papers.csv')
-        with open("papers.csv") as fp:
+        with open("papers.csv", encoding='UTF8') as fp:
             csvshka = fp.read()
         print(csvshka)
         # response

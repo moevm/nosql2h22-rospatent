@@ -16,12 +16,12 @@ User {{current_user.username}} now can:
 <script>
     function get_csv() {
         let searcher = "export=True";
-        let number_of_inputs = $("#data thead tr th").length;//document.getElementById("data").getElementsByTagName('thead').children;
-        console.log(number_of_inputs)
-        for (let i = 0; i < number_of_inputs; i++) {
-            let node = document.getElementById('search_' + i.toString());
-            searcher += '&columns[' + i.toString() + '][search][value]='+node.value;
-        }
+        $("#data").DataTable().columns().every(function (colId) {
+            let val = this.search()
+            if (this.search() === undefined)
+                val = ''
+            searcher += '&columns[' + colId.toString() + '][search][value]='+val;
+        })
 
         $.get("/api/data?" + searcher, function (csvContent) {
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8,' })
