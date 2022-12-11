@@ -9,5 +9,3 @@ services:
       - "5001:5001"
   db:
     image: mongo:6.0.2
-    ports:
-      - "8001:27017"

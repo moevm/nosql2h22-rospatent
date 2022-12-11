@@ -1,11 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
-{% if current_user.is_authenticated %}
-User {{current_user.username}} now can:
+
 <form action="/addpatent">
     <input type="submit" value="Add Item" />
 </form>
-{% endif %}
+
 
 <button onclick="get_csv()" style="margin-left: 51%">Выгрузить базу данных :З</button>
 <form id="csv_file" enctype="text/csv" style="margin-left: 51%">
