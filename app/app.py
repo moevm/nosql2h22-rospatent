@@ -198,12 +198,18 @@ def data():
             elif i == 4:
                 query = query(Q(authors__contains=search))
             elif i == 5:
-                n = -1
                 try:
-                    n = int(search)
-                    query = query(Q(authors_count=n))
+                    ints = search.split(';')
+                    if len(ints) != 2:
+                        continue
+                    if ints[0] != '':
+                        intfrom = int(ints[0])
+                        query = query(Q(authors_count__gte=intfrom))
+                    if ints[1] != '':
+                        intto = int(ints[1])
+                        query = query(Q(authors_count__lte=intto))
                 except ValueError:
-                    query = query(Q(authors_count=-1))
+                    continue
             elif i == 6:
                 query = query(Q(right_holders__contains=search))
             elif i == 7:
@@ -211,12 +217,18 @@ def data():
             elif i == 8:
                 query = query(Q(program_name__contains=search))
             elif i == 9:
-                n = -1
                 try:
-                    n = int(search)
-                    query = query(Q(creation_year=n))
+                    ints = search.split(';')
+                    if len(ints) != 2:
+                        continue
+                    if ints[0] != '':
+                        intfrom = int(ints[0])
+                        query = query(Q(creation_year__gte=intfrom))
+                    if ints[1] != '':
+                        intto = int(ints[1])
+                        query = query(Q(creation_year__lte=intto))
                 except ValueError:
-                    query = query(Q(creation_year=-1))
+                    continue
             elif i == 10:
                 try:
                     dates = search.split(';')
@@ -231,12 +243,18 @@ def data():
                 except ValueError:
                     continue
             elif i == 11:
-                n = -1
                 try:
-                    n = int(search)
-                    query = query(Q(registration_publish_number=n))
+                    ints = search.split(';')
+                    if len(ints) != 2:
+                        continue
+                    if ints[0] != '':
+                        intfrom = int(ints[0])
+                        query = query(Q(registration_publish_number__gte=intfrom))
+                    if ints[1] != '':
+                        intto = int(ints[1])
+                        query = query(Q(registration_publish_number__lte=intto))
                 except ValueError:
-                    query = query(Q(registration_publish_number=-1))
+                    continue
             elif i == 12:
                 if search == 'True':
                     query = query(Q(actual=True))

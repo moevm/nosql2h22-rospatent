@@ -78,12 +78,17 @@
         let input_counter = 0;
         $('#data thead th').each(function () {
             var title = $(this).text();
-            if (input_counter != 1 && input_counter != 3 && input_counter != 10) {
-                $(this).html(title + ' <input id="search_' + input_counter.toString() + '" type="text" class="col-search-input" placeholder="Search ' + title + '" />');
-            }
-            else {
+            if (input_counter == 1 || input_counter == 3 || input_counter == 10) {
                 $(this).html(title + '<br><input id="date_from_' + input_counter.toString() + '" type="date" class="col-search-input"/><br>'+
                     'to <input id="date_to_' + input_counter.toString() + '" type="date" class="col-search-input"/>');
+                
+            }
+            else if (input_counter == 5 || input_counter == 9 || input_counter == 11) {
+                $(this).html(title + '<br><input id="int_from_' + input_counter.toString() + '" type="number" step="1" class="col-search-input"/><br>'+
+                    'to <input id="int_to_' + input_counter.toString() + '" type="number" step="1" class="col-search-input"/>');
+            }
+            else {
+                $(this).html(title + ' <input id="search_' + input_counter.toString() + '" type="text" class="col-search-input" placeholder="Search ' + title + '" />');
             }
             input_counter += 1;
         });
@@ -104,6 +109,17 @@
                             return
                         }
                         res_value = fromdate + ";" + todate
+                    }
+                    else if ((this.id).startsWith("int_")) {
+                        fromint = $("#int_from_"+colId)[0].value
+                        toint = $("#int_to_"+colId)[0].value
+                        let f = parseInt(fromint, 10);
+                        let t = parseInt(toint, 10);
+                        if (f > t) {
+                            alert("First number bigger than second!")
+                            return
+                        }
+                        res_value = fromint + ";" + toint
                     }
 
                     table.column(colId).search(res_value).draw();
