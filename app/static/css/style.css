@@ -5,7 +5,7 @@
 	border-collapse: collapse;
 }
 
-#navbar_inner {	
+#navbar_inner {
 	margin-top: 10px;
 	padding-left: 10px;
 	padding-right: 10px;
@@ -40,4 +40,6 @@
 	display: block;
 	width: 90%;
 	margin: 0 auto;
+	padding: 10px;
+	border-color: black;
 }

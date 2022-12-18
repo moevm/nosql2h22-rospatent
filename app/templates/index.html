@@ -19,7 +19,7 @@
             let val = this.search()
             if (this.search() === undefined)
                 val = ''
-            searcher += '&columns[' + colId.toString() + '][search][value]='+val;
+            searcher += '&columns[' + colId.toString() + '][search][value]=' + val;
         })
 
         $.get("/api/data?" + searcher, function (csvContent) {
@@ -48,9 +48,9 @@
 
 
 </script>
-<div id="table_wrapper">
+<div id="table_wrapper" class="shadow p-3 mb-5 bg-white rounded">
     <table id="data" class="table" style="width:100%">
-        <thead>
+        <thead class="thead-light">
             <tr>
                 {% for field in fields %}
                 <th scope="col">{{ field }}</th>
@@ -83,12 +83,12 @@
         $('table thead tr th').each(function () {
             var title = $(this).text();
             if (input_counter == 1 || input_counter == 3 || input_counter == 10) {
-                $(this).html(title + '<br><input id="date_from_' + input_counter.toString() + '" type="date" class="col-search-input"/><br>'+
+                $(this).html(title + '<br><input id="date_from_' + input_counter.toString() + '" type="date" class="col-search-input"/><br>' +
                     'to <input id="date_to_' + input_counter.toString() + '" type="date" class="col-search-input"/>');
-                
+
             }
             else if (input_counter == 5 || input_counter == 9 || input_counter == 11) {
-                $(this).html(title + '<br><input id="int_from_' + input_counter.toString() + '" type="number" step="1" class="col-search-input"/><br>'+
+                $(this).html(title + '<br><input id="int_from_' + input_counter.toString() + '" type="number" step="1" class="col-search-input"/><br>' +
                     'to <input id="int_to_' + input_counter.toString() + '" type="number" step="1" class="col-search-input"/>');
             }
             else {
@@ -104,8 +104,8 @@
                 if (table.column(colId).search() !== this.value) {
                     let res_value = this.value
                     if ((this.id).startsWith("date_")) {
-                        fromdate = $("#date_from_"+colId)[0].value
-                        todate = $("#date_to_"+colId)[0].value
+                        fromdate = $("#date_from_" + colId)[0].value
+                        todate = $("#date_to_" + colId)[0].value
                         let f = new Date(fromdate);
                         let t = new Date(todate);
                         if (f > t) {
@@ -115,8 +115,8 @@
                         res_value = fromdate + ";" + todate
                     }
                     else if ((this.id).startsWith("int_")) {
-                        fromint = $("#int_from_"+colId)[0].value
-                        toint = $("#int_to_"+colId)[0].value
+                        fromint = $("#int_from_" + colId)[0].value
+                        toint = $("#int_to_" + colId)[0].value
                         let f = parseInt(fromint, 10);
                         let t = parseInt(toint, 10);
                         if (f > t) {
