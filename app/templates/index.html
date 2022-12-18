@@ -48,18 +48,20 @@
 
 
 </script>
+<div id="table_wrapper">
+    <table id="data" class="table" style="width:100%">
+        <thead>
+            <tr>
+                {% for field in fields %}
+                <th scope="col">{{ field }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
 
-<table id="data" class="table">
-    <thead>
-        <tr>
-            {% for field in fields %}
-            <th scope="col">{{ field }}</th>
-            {% endfor %}
-        </tr>
-    </thead>
-    <tbody>
-    </tbody>
-</table>
 {% endblock %}
 
 {% block scripts %}
@@ -73,10 +75,12 @@
             ajax: '/api/data',
             serverSide: true,
             columns: cols,
+            scrollX: true,
+            scrollY: 800
         });
 
         let input_counter = 0;
-        $('#data thead th').each(function () {
+        $('table thead tr th').each(function () {
             var title = $(this).text();
             if (input_counter == 1 || input_counter == 3 || input_counter == 10) {
                 $(this).html(title + '<br><input id="date_from_' + input_counter.toString() + '" type="date" class="col-search-input"/><br>'+
