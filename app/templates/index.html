@@ -4,18 +4,18 @@
 <div id="actions">
     <div class="container">
         <div class="row row-cols-3">
-            <div class="col">
+            <div class="col-md">
                 <form action="/addpatent">
-                    <input type="submit" value="Add Item" />
+                    <input type="submit" value="Добавить патент" class="btn btn-success"/>
                 </form>
             </div>
-            <div class="col">
-                <button onclick="get_csv()" style="margin-left: 51%">Выгрузить базу данных :З</button>
+            <div class="col-md">
+                <button onclick="get_csv()" class="btn btn-primary">Выгрузить базу данных :З</button>
             </div>
-            <div class="col">
-                <form id="csv_file" enctype="text/csv" style="margin-left: 51%">
-                    <input name="file" type="file" />
-                    <input type="button" value="Загрузить csv 👉👈" onclick="add_csv_to_db()" />
+            <div class="col-md">
+                <form id="csv_file" enctype="text/csv">
+                    <input name="file" type="file" class="form-control" id="formFile" />
+                    <input type="button" value="Загрузить csv 👉👈" onclick="add_csv_to_db()" class="btn btn-light" id="file_button"/>
                 </form>
             </div>
         </div>

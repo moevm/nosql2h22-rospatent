@@ -11,6 +11,8 @@
 	margin-top: 10px;
 }
 
+
+
 .table th {
 	font-weight: bold;
 	padding: 5px;
@@ -48,4 +50,15 @@
 	width: 1200px;
 	margin: 0 auto;
 	padding: 10px;
+}
+
+#file_button {
+	display: block;
+	width: 200px;
+	margin: 0 auto;
+	margin-top: 5px;
+}
+
+#formFile {
+	height: 45px;
 }
