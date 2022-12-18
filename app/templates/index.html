@@ -1,16 +1,26 @@
 {% extends "base.html" %}
 {% block content %}
 
-<form action="/addpatent">
-    <input type="submit" value="Add Item" />
-</form>
-
-
-<button onclick="get_csv()" style="margin-left: 51%">Выгрузить базу данных :З</button>
-<form id="csv_file" enctype="text/csv" style="margin-left: 51%">
-    <input name="file" type="file" />
-    <input type="button" value="Загрузить csv 👉👈" onclick="add_csv_to_db()" />
-</form>
+<div id="actions">
+    <div class="container">
+        <div class="row row-cols-3">
+            <div class="col">
+                <form action="/addpatent">
+                    <input type="submit" value="Add Item" />
+                </form>
+            </div>
+            <div class="col">
+                <button onclick="get_csv()" style="margin-left: 51%">Выгрузить базу данных :З</button>
+            </div>
+            <div class="col">
+                <form id="csv_file" enctype="text/csv" style="margin-left: 51%">
+                    <input name="file" type="file" />
+                    <input type="button" value="Загрузить csv 👉👈" onclick="add_csv_to_db()" />
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
     function get_csv() {
@@ -45,9 +55,8 @@
             processData: false
         });
     }
-
-
 </script>
+
 <div id="table_wrapper" class="shadow p-3 mb-5 bg-white rounded">
     <table id="data" class="table" style="width:100%">
         <thead class="thead-light">
