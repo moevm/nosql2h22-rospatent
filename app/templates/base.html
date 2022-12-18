@@ -24,13 +24,13 @@
                 </button>
                 <div id="navbarNavAltMarkup" class="collapse navbar-collapse">
                     <div class="navbar-nav">
-                        <a class="nav-link active">База данных</a>
-                        <a class="nav-link active">Операции над данными</a>
+                        <a class="nav-link active" href="/">База данных</a>
+                        <a class="nav-link">Операции над данными</a>
                         {% if not current_user.is_authenticated %}
-                        <a class="nav-link active" href="{{ url_for('login') }}">Вход</a>
+                        <a class="nav-link" href="{{ url_for('login') }}">Вход</a>
                         {% endif %}
                         {% if current_user.is_authenticated %}
-                        <a class="nav-link active" href="{{ url_for('logout') }}">Выход</a>
+                        <a class="nav-link" href="{{ url_for('logout') }}">Выход</a>
                         {% endif %}
                     </div>
                 </div>

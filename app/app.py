@@ -85,13 +85,8 @@ class Patent(UserMixin, db.Document):
 
 
 # patents collection
-Patent.drop_collection()
 if not Patent.objects():
-    print("hoho")
-
     file = open('data.csv')
-    # for line in file:
-    #     line = line.replace("\\xa0", " ")
     file_pd = pd.read_csv(StringIO(file.read()), encoding='utf-8-sig')
 
     parse_dates = ['registration date', 'application date', 'registration publish date']
