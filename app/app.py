@@ -47,7 +47,6 @@ def load_user(user_id):
 # users collection
 User.drop_collection()
 User(username="admin", password="123").save()
-User(username="chel", password="321").save()
 
 
 # Patents db
@@ -87,6 +86,38 @@ class Patent(UserMixin, db.Document):
 
 # patents collection
 Patent.drop_collection()
+if not Patent.objects():
+    print("hoho")
+
+    file = open('data.csv')
+    # for line in file:
+    #     line = line.replace("\\xa0", " ")
+    file_pd = pd.read_csv(StringIO(file.read()), encoding='utf-8-sig')
+
+    parse_dates = ['registration date', 'application date', 'registration publish date']
+    file_pd = pd.read_csv(r'data.csv', encoding='utf-8-sig', dtype={'registration number': str, 'registration date' : str,
+                          'application number' : str, 'application date' : str, 'authors' : str, 'authors count' : 'Int64',
+                          'right holders' : str, 'contact to third parties' : str, 'program name' : str, 'creation year' : 'Int64',
+                          'registration publish date' : str, 'registration publish number' : 'Int64', 'actual' : bool,
+                          'publication URL' : str}, parse_dates=parse_dates, date_parser = pd.to_datetime)
+    file_pd.rename(columns = {'application number':'application_number', 'registration date':'registration_date',
+                              'contact to third parties' : 'contact_to_third_parties', 'authors count' : 'authors_count', 
+                              'creation year' : 'creation_year', 'publication URL' : 'publication_URL',
+                              'program name' : 'program_name', 'application date' : 'application_date', 'registration publish number' : 'registration_publish_number',
+                              'right holders' : 'right_holders', 'registration publish date' : 'registration_publish_date',
+                              'registration number' : 'registration_number'}, inplace = True)
+    file_pd["registration_date"] = file_pd["registration_date"].dt.date.replace(pd.NaT, datetime.date(1999,12,20))
+    file_pd["application_date"] = file_pd["application_date"].dt.date.replace(pd.NaT, datetime.date(1999,12,20))
+    file_pd["registration_publish_date"] = file_pd["registration_publish_date"].dt.date.replace(pd.NaT, datetime.date(1999,12,20))
+    file_pd["creation_year"] = file_pd["creation_year"].replace(pd.NA, -1)
+    file_pd["authors_count"] = file_pd["authors_count"].replace(pd.NA, -1)
+    file_pd["registration_publish_number"] = file_pd["registration_publish_number"].replace(pd.NA, -1)
+    patent_instances = []
+    for row_dict in file_pd.to_dict(orient="records"):
+        patent_instances.append(Patent(**row_dict))
+    Patent.objects.insert(patent_instances, load_bulk=False)
+
+
 Patent(registration_number="950396", registration_date="1995-11-09", application_number="0000950377",
        application_date="1995-10-19",
        authors="Тюхов Борис Петрович (RU) Ильиченкова Зоя Викторовна  (RU) Федосеева Татьяна Леонидовна (RU)",
