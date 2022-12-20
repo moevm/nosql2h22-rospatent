@@ -21,3 +21,9 @@
 username: admin
 
 password: 123
+
+## Инструкция запуска через Docker
+
+docker-compose build
+
+docker-compose up
